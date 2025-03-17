@@ -23,6 +23,7 @@ struct RestaurantListView: View {
                               name: restaurantNames[index],
                               location: restaurantLocations[index],
                               type: restaurantTypes[index])
+            .listRowSeparator(.hidden)
         }
         .listStyle(.plain)
     }
@@ -45,6 +46,8 @@ class Restaurant {
 }
 
 struct TableImageTextRow: View {
+    @State private var showOptions = false
+    @State private var showError = false
     
     var imageName: String
     var name: String
@@ -52,11 +55,11 @@ struct TableImageTextRow: View {
     var type: String
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
+        VStack(alignment: .leading, spacing: 10) {
             Image(imageName)
                 .resizable()
-                .frame(height: 150)
-                .scaledToFit()
+                .scaledToFill()
+                .frame(height: 200)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
             VStack(alignment: .leading) {
                 Text(name)
@@ -67,8 +70,27 @@ struct TableImageTextRow: View {
                     .font(.system(.body, design: .rounded))
                     .foregroundStyle(.gray)
             }
+            .padding(.horizontal)
+            .padding(.vertical)
         }
-        .listRowSeparator(.hidden)
+        .onTapGesture {
+            showOptions.toggle()
+        }
+        .confirmationDialog("What do you want to do?", isPresented: $showOptions, titleVisibility: .visible) {
+            Button("Reserve a Table"){
+                self.showError.toggle()
+            }
+            Button("Mark as favorite"){
+                
+            }
+        }
+        .alert("Not yet available", isPresented: $showError) {
+            Button("OK") {
+                
+            }
+        } message: {
+            Text("Sorrym this feature is not available yet. Please retry later.")
+        }
     }
 }
 
