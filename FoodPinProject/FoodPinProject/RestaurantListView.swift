@@ -14,23 +14,15 @@ struct RestaurantListView: View {
         
         @State var restaurantImages = ["cafedeadend", "homei", "teakha", "cafeloisl", "petiteoyster", "forkee", "posatelier", "bourkestreetbakery", "haigh", "palomino", "upstate", "traif", "graham", "waffleandwolf", "fiveleaves", "cafelore", "confessional", "barrafina", "donostia", "royaloak", "cask"]
         
+        @State var restaurantLocations = ["Hong Kong", "Hong Kong", "Hong Kong", "Hong Kong", "Ho ng Kong", "Hong Kong", "Hong Kong", "Sydney", "Sydney", "Sydney", "New York", "New York", "New York", "New York", "New York", "New York", "New York", "London", "London", "London", "London"]
+        
+        @State var restaurantTypes = ["Coffee & Tea Shop", "Cafe", "Tea House", "Austrian / Causu al Drink", "French", "Bakery", "Bakery", "Chocolate", "Cafe", "American / Seafood" , "American", "American", "Breakfast & Brunch", "Coffee & Tea", "Coffee & Tea", "L atin American", "Spanish", "Spanish", "Spanish", "British", "Thai"]
+        
         List(restaurantNames.indices, id: \.self) {index in
-            HStack(alignment: .top, spacing: 20) {
-                Image(restaurantImages[index])
-                    .resizable()
-                    .frame(width: 120, height: 118)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                VStack(alignment: .leading) {
-                    Text(restaurantNames[index])
-                        .font(.system(.title2, design: .rounded))
-                    Text("type")
-                        .font(.system(.body, design: .rounded))
-                    Text("location")
-                        .font(.system(.subheadline, design: .rounded))
-                        .foregroundStyle(.gray)
-                }
-            }
-            .listRowSeparator(.hidden)
+            TableImageTextRow(imageName: restaurantImages[index],
+                              name: restaurantNames[index],
+                              location: restaurantLocations[index],
+                              type: restaurantTypes[index])
         }
         .listStyle(.plain)
     }
@@ -51,3 +43,32 @@ class Restaurant {
         self.image = image
     }
 }
+
+struct TableImageTextRow: View {
+    
+    var imageName: String
+    var name: String
+    var location: String
+    var type: String
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            Image(imageName)
+                .resizable()
+                .frame(height: 150)
+                .scaledToFit()
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+            VStack(alignment: .leading) {
+                Text(name)
+                    .font(.system(.title2, design: .rounded))
+                Text(location)
+                    .font(.system(.subheadline, design: .rounded))
+                Text(type)
+                    .font(.system(.body, design: .rounded))
+                    .foregroundStyle(.gray)
+            }
+        }
+        .listRowSeparator(.hidden)
+    }
+}
+
