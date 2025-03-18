@@ -14,6 +14,7 @@
 		BE8C74AD2D8725670017E27D /* FoodPinProjectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8C74AC2D8725670017E27D /* FoodPinProjectTests.swift */; };
 		BE8C74B72D8725670017E27D /* FoodPinProjectUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8C74B62D8725670017E27D /* FoodPinProjectUITests.swift */; };
 		BE8C74B92D8725670017E27D /* FoodPinProjectUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8C74B82D8725670017E27D /* FoodPinProjectUITestsLaunchTests.swift */; };
+		BE8C74C62D89AA460017E27D /* Restaurant.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8C74C52D89AA460017E27D /* Restaurant.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +45,7 @@
 		BE8C74B22D8725670017E27D /* FoodPinProjectUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FoodPinProjectUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE8C74B62D8725670017E27D /* FoodPinProjectUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodPinProjectUITests.swift; sourceTree = "<group>"; };
 		BE8C74B82D8725670017E27D /* FoodPinProjectUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodPinProjectUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		BE8C74C52D89AA460017E27D /* Restaurant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Restaurant.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +97,8 @@
 			isa = PBXGroup;
 			children = (
 				BE8C749B2D8725660017E27D /* FoodPinProjectApp.swift */,
+				BE8C74C82D89BFD00017E27D /* Model */,
+				BE8C74C72D89BFA20017E27D /* View */,
 				BE8C749D2D8725660017E27D /* RestaurantListView.swift */,
 				BE8C749F2D8725670017E27D /* Assets.xcassets */,
 				BE8C74A12D8725670017E27D /* Preview Content */,
@@ -125,6 +129,21 @@
 				BE8C74B82D8725670017E27D /* FoodPinProjectUITestsLaunchTests.swift */,
 			);
 			path = FoodPinProjectUITests;
+			sourceTree = "<group>";
+		};
+		BE8C74C72D89BFA20017E27D /* View */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		BE8C74C82D89BFD00017E27D /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				BE8C74C52D89AA460017E27D /* Restaurant.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -259,6 +278,7 @@
 			files = (
 				BE8C749E2D8725660017E27D /* RestaurantListView.swift in Sources */,
 				BE8C749C2D8725660017E27D /* FoodPinProjectApp.swift in Sources */,
+				BE8C74C62D89AA460017E27D /* Restaurant.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
