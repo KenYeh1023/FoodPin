@@ -8,21 +8,26 @@
 import SwiftUI
 
 struct RestaurantListView: View {
+    
+    var restaurants: [Restaurant] = []
+    var restaurantNames = ["Cafe Deadend", "Homei", "Teakha", "Cafe Loisl", "Petite Oy ster", "For Kee Restaurant", "Po's Atelier", "Bourke Street Bakery", "Haigh's Choc olate", "Palomino Espresso", "Upstate", "Traif", "Graham Avenue Meats", "Waffle & Wolf", "Five Leaves", "Cafe Lore", "Confessional", "Barrafina", "Donostia", "Royal Oak", "CASK Pub and Kitchen"]
+    
+    var restaurantImages = ["cafedeadend", "homei", "teakha", "cafeloisl", "petiteoyster", "forkee", "posatelier", "bourkestreetbakery", "haigh", "palomino", "upstate", "traif", "graham", "waffleandwolf", "fiveleaves", "cafelore", "confessional", "barrafina", "donostia", "royaloak", "cask"]
+    
+    var restaurantLocations = ["Hong Kong", "Hong Kong", "Hong Kong", "Hong Kong", "Ho ng Kong", "Hong Kong", "Hong Kong", "Sydney", "Sydney", "Sydney", "New York", "New York", "New York", "New York", "New York", "New York", "New York", "London", "London", "London", "London"]
+    
+    var restaurantTypes = ["Coffee & Tea Shop", "Cafe", "Tea House", "Austrian / Causu al Drink", "French", "Bakery", "Bakery", "Chocolate", "Cafe", "American / Seafood" , "American", "American", "Breakfast & Brunch", "Coffee & Tea", "Coffee & Tea", "L atin American", "Spanish", "Spanish", "Spanish", "British", "Thai"]
+    
+    @State var restaurantIsFavorites = Array(repeating: false, count: 21)
+    
     var body: some View {
-        @State var restaurants: [Restaurant] = []
-        @State var restaurantNames = ["Cafe Deadend", "Homei", "Teakha", "Cafe Loisl", "Petite Oy ster", "For Kee Restaurant", "Po's Atelier", "Bourke Street Bakery", "Haigh's Choc olate", "Palomino Espresso", "Upstate", "Traif", "Graham Avenue Meats", "Waffle & Wolf", "Five Leaves", "Cafe Lore", "Confessional", "Barrafina", "Donostia", "Royal Oak", "CASK Pub and Kitchen"]
-        
-        @State var restaurantImages = ["cafedeadend", "homei", "teakha", "cafeloisl", "petiteoyster", "forkee", "posatelier", "bourkestreetbakery", "haigh", "palomino", "upstate", "traif", "graham", "waffleandwolf", "fiveleaves", "cafelore", "confessional", "barrafina", "donostia", "royaloak", "cask"]
-        
-        @State var restaurantLocations = ["Hong Kong", "Hong Kong", "Hong Kong", "Hong Kong", "Ho ng Kong", "Hong Kong", "Hong Kong", "Sydney", "Sydney", "Sydney", "New York", "New York", "New York", "New York", "New York", "New York", "New York", "London", "London", "London", "London"]
-        
-        @State var restaurantTypes = ["Coffee & Tea Shop", "Cafe", "Tea House", "Austrian / Causu al Drink", "French", "Bakery", "Bakery", "Chocolate", "Cafe", "American / Seafood" , "American", "American", "Breakfast & Brunch", "Coffee & Tea", "Coffee & Tea", "L atin American", "Spanish", "Spanish", "Spanish", "British", "Thai"]
-        
         List(restaurantNames.indices, id: \.self) {index in
-            TableImageTextRow(imageName: restaurantImages[index],
-                              name: restaurantNames[index],
-                              location: restaurantLocations[index],
-                              type: restaurantTypes[index])
+            TableImageTextRow(
+                isFavorite: $restaurantIsFavorites[index],
+                imageName: restaurantImages[index],
+                name: restaurantNames[index],
+                location: restaurantLocations[index],
+                type: restaurantTypes[index])
             .listRowSeparator(.hidden)
         }
         .listStyle(.plain)
@@ -46,6 +51,7 @@ class Restaurant {
 }
 
 struct TableImageTextRow: View {
+    @Binding var isFavorite: Bool
     @State private var showOptions = false
     @State private var showError = false
     
@@ -55,13 +61,13 @@ struct TableImageTextRow: View {
     var type: String
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        HStack(alignment: .top, spacing: 10) {
             Image(imageName)
                 .resizable()
-                .scaledToFill()
-                .frame(height: 200)
+                .scaledToFit()
+                .frame(width: 120, height: 120)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
-            VStack(alignment: .leading) {
+            LazyVStack(alignment: .leading) {
                 Text(name)
                     .font(.system(.title2, design: .rounded))
                 Text(location)
@@ -69,9 +75,15 @@ struct TableImageTextRow: View {
                 Text(type)
                     .font(.system(.body, design: .rounded))
                     .foregroundStyle(.gray)
+                    .onAppear {
+                        print("Row Appeared!.")
+                    }
             }
-            .padding(.horizontal)
-            .padding(.vertical)
+            if isFavorite {
+                Spacer()
+                Image(systemName: "heart.fill")
+                    .foregroundStyle(.yellow)
+            }
         }
         .onTapGesture {
             showOptions.toggle()
@@ -80,13 +92,12 @@ struct TableImageTextRow: View {
             Button("Reserve a Table"){
                 self.showError.toggle()
             }
-            Button("Mark as favorite"){
-                
+            Button(self.isFavorite ? "Remove from favorites" : "Mark as favorite"){
+                self.isFavorite.toggle()
             }
         }
         .alert("Not yet available", isPresented: $showError) {
             Button("OK") {
-                
             }
         } message: {
             Text("Sorrym this feature is not available yet. Please retry later.")
