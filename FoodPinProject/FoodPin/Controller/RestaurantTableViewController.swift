@@ -15,7 +15,6 @@ protocol RestaurantDataStore {
 class RestaurantTableViewController: UITableViewController, RestaurantDataStore {
     
     var restaurants: [Restaurant] = []
-    var container: ModelContainer?
     
 //    var restaurants:[Restaurant] = [
 //        Restaurant(name: "Cafe Deadend", type: "Coffee & Tea Shop", location: "G/F, 72 Po Hing Fong, Sheung Wan, Hong Kong", phone: "232-923423", description: "Searching for great breakfast eateries and coffee? This place is for you. We open at 6:30 every morning, and close at 9 PM. We offer espresso and espresso based drink, such as capuccino, cafe latte, piccolo and many more. Come over and enjoy a great meal.", image: "cafedeadend", isFavorite: false),
@@ -53,18 +52,11 @@ class RestaurantTableViewController: UITableViewController, RestaurantDataStore 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        container = try? ModelContainer(for: Restaurant.self)
         fetchRestaurantData()
 
         tableView.cellLayoutMarginsFollowReadableWidth = true
         tableView.dataSource = dataSource
         tableView.separatorStyle = .none
-        
-//        var snapshot = NSDiffableDataSourceSnapshot<Section, Restaurant>()
-//        snapshot.appendSections([.all])
-//        snapshot.appendItems(restaurants, toSection: .all)
-//        
-//        dataSource.apply(snapshot, animatingDifferences: false)
         
         navigationItem.backButtonTitle = ""
         
@@ -97,8 +89,7 @@ class RestaurantTableViewController: UITableViewController, RestaurantDataStore 
     }
     
     func fetchRestaurantData() {
-        let descriptor = FetchDescriptor<Restaurant>()
-        restaurants = (try? container?.mainContext.fetch(descriptor)) ?? []
+        restaurants = RestaurantManager.shared.fetchRestaurantAll() ?? []
         
         updateSnapshot()
     }
@@ -148,10 +139,10 @@ class RestaurantTableViewController: UITableViewController, RestaurantDataStore 
         // Delete action
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { (action, sourceView, completionHandler) in
             
-            self.container?.mainContext.delete(restaurant)
+            RestaurantManager.shared.mainContext.delete(restaurant)
             
             do {
-                try self.container?.mainContext.save()
+                try  RestaurantManager.shared.mainContext.save()
             } catch {
                 print(error)
             }
@@ -159,15 +150,8 @@ class RestaurantTableViewController: UITableViewController, RestaurantDataStore 
             var snapshot = self.dataSource.snapshot()
             snapshot.deleteItems([restaurant])
             self.dataSource.apply(snapshot, animatingDifferences: true)
-            let descriptor = FetchDescriptor<Restaurant>()
-            do {
-                guard let tableCount = try self.container?.mainContext.fetchCount(descriptor) else {
-                    return
-                }
-                self.tableView.backgroundView?.isHidden = tableCount == 0 ? false : true
-            } catch {
-                print(error)
-            }
+            let tableCount = RestaurantManager.shared.fetchRestaurantCount()
+            self.tableView.backgroundView?.isHidden = tableCount == 0 ? false : true
             
             // Call completion handler to dismiss the action button
             completionHandler(true)

@@ -38,15 +38,13 @@ class NewRestaurantController: UITableViewController {
             if let image = photoImage.image {
                 restaurant.image = image
             }
-            
-            container?.mainContext.insert(restaurant)
+            RestaurantManager.shared.mainContext.insert(restaurant)
             
             do {
-                try container?.mainContext.save()
+                try RestaurantManager.shared.mainContext.save()
             } catch {
                 print(error)
             }
-            
             print("Saving data to database...")
         }
         
@@ -99,7 +97,6 @@ class NewRestaurantController: UITableViewController {
         }
     }
     
-    var container: ModelContainer?
     var restaurant: Restaurant?
 
     override func viewDidLoad() {
@@ -134,7 +131,6 @@ class NewRestaurantController: UITableViewController {
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
         
-        container = try? ModelContainer(for: Restaurant.self)
         restaurant = Restaurant()
     }
     
@@ -164,8 +160,6 @@ class NewRestaurantController: UITableViewController {
                 }
             }
             
-            
-            
             let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
             
             photoSourceRequestController.addAction(cameraAction)
@@ -182,8 +176,6 @@ class NewRestaurantController: UITableViewController {
             present(photoSourceRequestController, animated: true)
         }
     }
-    
-    
 }
 
 // MARK: - UIIMagePickerControllerDelegate

@@ -30,6 +30,7 @@ import SwiftData
         }
     }
     
+    var id: String = ""
     var name: String = ""
     var type: String = ""
     var location: String = ""
@@ -68,6 +69,7 @@ import SwiftData
     , location: String = "", phone: String = ""
     , description: String = "", image: UIImage = UIImage()
     , isFavorite: Bool = false, rating: Rating? = nil) {
+    self.id = UUID().uuidString
     self.name = name
     self.type = type
     self.location = location

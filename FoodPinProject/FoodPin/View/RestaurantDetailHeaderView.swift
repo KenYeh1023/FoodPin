@@ -26,7 +26,8 @@ class RestaurantDetailHeaderView: UIView {
             }
         }
     }
-    @IBOutlet var headerButton: UIButton!
+//    @IBOutlet var headerButton: UIButton!
+    @IBOutlet var headerButton: UIBarButtonItem!
     @IBOutlet var ratingImageView: UIImageView!
 
 }

@@ -27,7 +27,6 @@ class RestaurantDetailViewController: UIViewController {
             }
             
             let scaleTransform = CGAffineTransform.init(scaleX: 0.1, y: 0.1)
-//            let scaleTransform = CGAffineTransform.init(scaleX: 5.0, y: 5.0)
             self.headerView.ratingImageView.transform = scaleTransform
             self.headerView.ratingImageView.alpha = 0
             
@@ -49,9 +48,9 @@ class RestaurantDetailViewController: UIViewController {
         headerView.typeLabel.text = restaurant.type
         headerView.headerImageView.image = restaurant.image
         
-        let heartImage = restaurant.isFavorite ? "heart.fill" : "heart"
-        headerView.headerButton.tintColor = restaurant.isFavorite ? .systemYellow : .white
-        headerView.headerButton.setImage(UIImage(systemName: heartImage), for: .normal)
+        updateHeaderButtonView()
+        headerView.headerButton.target = self
+        headerView.headerButton.action = #selector(headerButtonTapped(sender:))
         
         tableView.delegate = self
         tableView.dataSource = self
@@ -59,6 +58,17 @@ class RestaurantDetailViewController: UIViewController {
         tableView.contentInsetAdjustmentBehavior = .never
         navigationItem.backButtonTitle = ""
         
+    }
+    
+    @objc func headerButtonTapped(sender: UIBarButtonItem) {
+        restaurant.isFavorite.toggle()
+        updateHeaderButtonView()
+    }
+    
+    func updateHeaderButtonView() {
+        let heartImage = restaurant.isFavorite ? "heart.fill" : "heart"
+        headerView.headerButton.tintColor = restaurant.isFavorite ? .systemYellow : .white
+        headerView.headerButton.image = UIImage(systemName: heartImage)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -121,7 +131,5 @@ extension RestaurantDetailViewController: UITableViewDelegate, UITableViewDataSo
         default:
             fatalError("Failed to instantiate the table view cell for detail view controller.")
         }
-        
     }
-    
 }

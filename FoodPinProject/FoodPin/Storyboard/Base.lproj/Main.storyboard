@@ -225,30 +225,16 @@
                                                 </label>
                                             </subviews>
                                         </stackView>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="J7H-k3-AKB">
-                                            <rect key="frame" x="313" y="18" width="71" height="50"/>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="50" id="9Wp-Zl-wbR"/>
-                                                <constraint firstAttribute="width" constant="71" id="TGX-Mp-6kq"/>
-                                            </constraints>
-                                            <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                            <state key="normal" title="Button"/>
-                                            <buttonConfiguration key="configuration" style="plain" image="heart" catalog="system">
-                                                <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" configurationType="pointSize" pointSize="30"/>
-                                            </buttonConfiguration>
-                                        </button>
                                     </subviews>
                                     <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                     <constraints>
                                         <constraint firstAttribute="trailing" secondItem="bCU-di-SkW" secondAttribute="trailing" id="9gA-xD-oaB"/>
                                         <constraint firstItem="IGr-TV-7G1" firstAttribute="leading" secondItem="SDu-nA-rmG" secondAttribute="leading" constant="20" id="Kom-Yj-RFM"/>
-                                        <constraint firstItem="J7H-k3-AKB" firstAttribute="top" secondItem="SDu-nA-rmG" secondAttribute="topMargin" constant="10" id="Lw8-SR-JLA"/>
                                         <constraint firstAttribute="trailing" secondItem="llr-pJ-FZb" secondAttribute="trailing" id="S2n-Xm-cLW"/>
                                         <constraint firstAttribute="bottom" secondItem="IGr-TV-7G1" secondAttribute="bottom" constant="20" id="TK1-ta-7Cu"/>
                                         <constraint firstAttribute="trailing" secondItem="lWZ-XE-A2X" secondAttribute="trailing" constant="20" id="Wgb-QS-iV7"/>
                                         <constraint firstItem="bCU-di-SkW" firstAttribute="top" secondItem="SDu-nA-rmG" secondAttribute="top" id="ZY5-yL-9AS"/>
                                         <constraint firstItem="bCU-di-SkW" firstAttribute="leading" secondItem="SDu-nA-rmG" secondAttribute="leading" id="a4o-oh-dBb"/>
-                                        <constraint firstAttribute="trailingMargin" secondItem="J7H-k3-AKB" secondAttribute="trailing" constant="10" id="b58-JX-A4K"/>
                                         <constraint firstItem="llr-pJ-FZb" firstAttribute="leading" secondItem="SDu-nA-rmG" secondAttribute="leading" id="bUs-c0-uE8"/>
                                         <constraint firstItem="llr-pJ-FZb" firstAttribute="top" secondItem="SDu-nA-rmG" secondAttribute="top" id="f5a-rb-aIm"/>
                                         <constraint firstAttribute="trailing" secondItem="IGr-TV-7G1" secondAttribute="trailing" constant="150" id="ha5-pc-ZPz"/>
@@ -257,7 +243,7 @@
                                         <constraint firstAttribute="bottom" secondItem="llr-pJ-FZb" secondAttribute="bottom" id="zuw-Eu-8M9"/>
                                     </constraints>
                                     <connections>
-                                        <outlet property="headerButton" destination="J7H-k3-AKB" id="fkw-KC-sSB"/>
+                                        <outlet property="headerButton" destination="Ir7-Mg-xSP" id="X7W-Fe-lwD"/>
                                         <outlet property="headerImageView" destination="llr-pJ-FZb" id="T5q-KH-kCk"/>
                                         <outlet property="nameLabel" destination="Spi-wE-Kz0" id="OHs-Ta-sfm"/>
                                         <outlet property="ratingImageView" destination="lWZ-XE-A2X" id="eU3-0J-CoY"/>
@@ -419,7 +405,9 @@
                             <constraint firstItem="xar-KJ-wBA" firstAttribute="leading" secondItem="zUE-YR-akY" secondAttribute="leading" id="Mwf-wM-R0e"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="2fb-he-9f6"/>
+                    <navigationItem key="navigationItem" id="2fb-he-9f6">
+                        <barButtonItem key="rightBarButtonItem" image="heart" catalog="system" id="Ir7-Mg-xSP"/>
+                    </navigationItem>
                     <size key="freeformSize" width="402" height="1200"/>
                     <connections>
                         <outlet property="headerView" destination="SDu-nA-rmG" id="WZL-In-jSD"/>
