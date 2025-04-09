@@ -62,6 +62,11 @@ class RestaurantDetailViewController: UIViewController {
     
     @objc func headerButtonTapped(sender: UIBarButtonItem) {
         restaurant.isFavorite.toggle()
+        if let restaurant = RestaurantManager.shared.fetchRestaurantById(id: self.restaurant.id) {
+            restaurant.isFavorite = self.restaurant.isFavorite
+            try? RestaurantManager.shared.mainContext.save()
+        }
+        
         updateHeaderButtonView()
     }
     
