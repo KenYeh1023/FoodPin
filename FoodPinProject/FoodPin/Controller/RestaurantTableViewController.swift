@@ -9,12 +9,13 @@ import UIKit
 import SwiftData
 
 protocol RestaurantDataStore {
-    func fetchRestaurantData()
+    func fetchRestaurantData(searchText: String)
 }
 
 class RestaurantTableViewController: UITableViewController, RestaurantDataStore {
     
     var restaurants: [Restaurant] = []
+    var searchController: UISearchController!
     
     lazy var dataSource = configureDataSource()
     
@@ -28,7 +29,15 @@ class RestaurantTableViewController: UITableViewController, RestaurantDataStore 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        fetchRestaurantData()
+        searchController = UISearchController(searchResultsController: nil)
+        searchController.searchResultsUpdater = self
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.searchBar.placeholder = "Search Restaurants..."
+        
+        tableView.tableHeaderView = searchController.searchBar
+//        self.navigationItem.searchController = searchController
+        
+        fetchRestaurantData(searchText: "")
 
         tableView.cellLayoutMarginsFollowReadableWidth = true
         tableView.dataSource = dataSource
@@ -36,7 +45,7 @@ class RestaurantTableViewController: UITableViewController, RestaurantDataStore 
         
         navigationItem.backButtonTitle = ""
         
-        title = "Restaurants"
+        title = "FoodPin"
         
         if let appearance = navigationController?.navigationBar.standardAppearance {
             
@@ -65,8 +74,15 @@ class RestaurantTableViewController: UITableViewController, RestaurantDataStore 
         tableView.reloadData()
     }
     
-    func fetchRestaurantData() {
-        restaurants = RestaurantManager.shared.fetchRestaurantAll() ?? []
+    func fetchRestaurantData(searchText: String) {
+        if searchText.isEmpty {
+            restaurants = RestaurantManager.shared.fetchRestaurantAll() ?? []
+        } else {
+            let descriptor: FetchDescriptor<Restaurant>
+            let predicate = #Predicate<Restaurant> {$0.name.localizedStandardContains(searchText) || $0.location.localizedStandardContains(searchText)}
+            descriptor = FetchDescriptor<Restaurant>(predicate: predicate)
+            restaurants = (try? RestaurantManager.shared.mainContext.fetch(descriptor)) ?? []
+        }
         
         updateSnapshot()
     }
@@ -107,6 +123,10 @@ class RestaurantTableViewController: UITableViewController, RestaurantDataStore 
     // MARK: - UITableViewDelegate Protocol
         
     override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        
+        if searchController.isActive {
+            return UISwipeActionsConfiguration()
+        }
         
         // Get the selected restaurant
         guard let restaurant = self.dataSource.itemIdentifier(for: indexPath) else {
@@ -208,5 +228,15 @@ class RestaurantTableViewController: UITableViewController, RestaurantDataStore 
                 destinationController.dataStore = self
             }
         }
+    }
+}
+
+// MARK: - UISearchResultUpdating
+extension RestaurantTableViewController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        guard let searchText = searchController.searchBar.text else {
+            return
+        }
+        fetchRestaurantData(searchText: searchText)
     }
 }

@@ -49,7 +49,7 @@ class NewRestaurantController: UITableViewController {
         }
         
         dismiss(animated: true) {
-            self.dataStore?.fetchRestaurantData()
+            self.dataStore?.fetchRestaurantData(searchText: "")
         }
     }
     
