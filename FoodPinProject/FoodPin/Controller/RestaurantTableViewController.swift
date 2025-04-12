@@ -7,6 +7,7 @@
 
 import UIKit
 import SwiftData
+import UserNotifications
 
 protocol RestaurantDataStore {
     func fetchRestaurantData(searchText: String)
@@ -64,6 +65,7 @@ class RestaurantTableViewController: UITableViewController, RestaurantDataStore 
         
         tableView.backgroundView = emptyRestaurantView
         tableView.backgroundView?.isHidden = restaurants.count == 0 ? false : true
+        prepareNotification()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -94,6 +96,37 @@ class RestaurantTableViewController: UITableViewController, RestaurantDataStore 
         
         dataSource.apply(snapshot, animatingDifferences: true)
         tableView.backgroundView?.isHidden = restaurants.count == 0 ? false : true
+    }
+    
+    func prepareNotification() {
+        guard restaurants.count != 0 else {
+            return
+        }
+        // 隨機選擇一間餐廳
+        let randomNum = Int.random(in: 0..<restaurants.count)
+        let suggestedRestaurant = restaurants[randomNum]
+        
+        // 建立通知
+        let content = UNMutableNotificationContent()
+        content.title = "FoodPin"
+        content.subtitle = "今日餐廳推薦"
+        content.body = "試過 \(suggestedRestaurant.name) 了嗎?\n你曾蒐藏在你的 FoodPin 清單內, 快來預約用餐吧!\n餐廳地址: \(suggestedRestaurant.location)"
+        content.sound = .default
+        
+        let tempDirURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+        let tempFileURL = tempDirURL.appendingPathComponent("suggested-restaurant.jpg")
+        
+        try? suggestedRestaurant.image.jpegData(compressionQuality: 1.0)?.write(to: tempDirURL)
+        
+        if let restaurantImage = try? UNNotificationAttachment(identifier: "restaurantImage", url: tempFileURL, options: nil) {
+            content.attachments = [restaurantImage]
+        }
+        
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
+        let request = UNNotificationRequest(identifier: "foodpin.restaurantSuggestion", content: content, trigger: trigger)
+        //排程通知
+        UNUserNotificationCenter.current().add(request, withCompletionHandler: nil)
+        print("Notification Created!")
     }
 
     // MARK: - UITableView Diffable Data Source
