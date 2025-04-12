@@ -10,7 +10,7 @@ import SwiftData
 
 class NewRestaurantController: UITableViewController {
     
-    var dataStore: RestaurantDataStore?
+    weak var dataStore: RestaurantDataStore?
     
     @IBAction func saveRestaurant(sender: UIBarButtonItem) {
         if nameTextField.text?.isEmpty ?? false ||

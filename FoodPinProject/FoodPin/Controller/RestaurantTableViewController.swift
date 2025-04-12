@@ -9,7 +9,7 @@ import UIKit
 import SwiftData
 import UserNotifications
 
-protocol RestaurantDataStore {
+protocol RestaurantDataStore: AnyObject {
     func fetchRestaurantData(searchText: String)
 }
 
@@ -74,6 +74,14 @@ class RestaurantTableViewController: UITableViewController, RestaurantDataStore 
         navigationController?.hidesBarsOnSwipe = true
         navigationController?.navigationBar.prefersLargeTitles = true
         tableView.reloadData()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        let storyboard = UIStoryboard(name: "Onboarding", bundle: nil)
+        if let walkthroughViewController = storyboard.instantiateViewController(withIdentifier: "WalkthroughViewController") as? WalkthroughViewController {
+            
+            present(walkthroughViewController, animated: true, completion: nil)
+        }
     }
     
     func fetchRestaurantData(searchText: String) {
