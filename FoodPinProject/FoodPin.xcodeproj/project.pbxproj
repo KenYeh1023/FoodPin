@@ -6,7 +6,14 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		BE02C7D32DAB83AD005E91A1 /* About.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BE02C7D12DAB83AC005E91A1 /* About.storyboard */; };
+		BE02C7DC2DAB83F4005E91A1 /* Discover.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BE02C7DA2DAB83F4005E91A1 /* Discover.storyboard */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
+		BE02C7D22DAB83AD005E91A1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = FoodPin/Storyboard/Base.lproj/About.storyboard; sourceTree = "<group>"; };
+		BE02C7DB2DAB83F4005E91A1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = FoodPin/Storyboard/Base.lproj/Discover.storyboard; sourceTree = "<group>"; };
 		F4ED7BA02CD8C22E0048A450 /* FoodPin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FoodPin.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -45,6 +52,8 @@
 		F4ED7B972CD8C22E0048A450 = {
 			isa = PBXGroup;
 			children = (
+				BE02C7DA2DAB83F4005E91A1 /* Discover.storyboard */,
+				BE02C7D12DAB83AC005E91A1 /* About.storyboard */,
 				F4ED7BA22CD8C22E0048A450 /* FoodPin */,
 				F4ED7BA12CD8C22E0048A450 /* Products */,
 			);
@@ -122,6 +131,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE02C7D32DAB83AD005E91A1 /* About.storyboard in Resources */,
+				BE02C7DC2DAB83F4005E91A1 /* Discover.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -136,6 +147,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		BE02C7D12DAB83AC005E91A1 /* About.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				BE02C7D22DAB83AD005E91A1 /* Base */,
+			);
+			name = About.storyboard;
+			sourceTree = "<group>";
+		};
+		BE02C7DA2DAB83F4005E91A1 /* Discover.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				BE02C7DB2DAB83F4005E91A1 /* Base */,
+			);
+			name = Discover.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		F4ED7BB42CD8C22F0048A450 /* Debug */ = {

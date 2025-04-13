@@ -32,8 +32,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             } else {
                 print(error?.localizedDescription ?? "user notifications are not allowed")
             }
-            
         }
+        
+        //Tab bar
+        let tabBarAppearance = UITabBarAppearance()
+        tabBarAppearance.configureWithOpaqueBackground()
+        
+        UITabBar.appearance().tintColor = UIColor(named: "NavigationBarTitle")
+        UITabBar.appearance().standardAppearance = tabBarAppearance
         
         return true
     }
