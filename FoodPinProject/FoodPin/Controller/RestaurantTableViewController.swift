@@ -29,7 +29,6 @@ class RestaurantTableViewController: UITableViewController, RestaurantDataStore 
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         searchController = UISearchController(searchResultsController: nil)
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false

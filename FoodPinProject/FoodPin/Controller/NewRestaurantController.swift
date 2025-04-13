@@ -38,6 +38,7 @@ class NewRestaurantController: UITableViewController {
             if let image = photoImage.image {
                 restaurant.image = image
             }
+            
             RestaurantManager.shared.mainContext.insert(restaurant)
             
             do {
