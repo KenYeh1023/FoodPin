@@ -14,12 +14,14 @@
 
 - 儲存自己喜愛的餐廳  
 - 功能包括：
+  - APP 起始導覽圖 UIPageView
   - 本地使用者通知 (UserNotifications)
   - 新增/刪除餐廳  
   - 搜尋餐廳功能(依照名字或地點搜尋)
   - TableView Rows 左/右滑動功能(加入愛心/刪除/分享)  
   - 地圖大頭針顯示地點
   - 給予餐廳回饋 emoji 
+  - Web View 至社群媒體
 
 ---
 
