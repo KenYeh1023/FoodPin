@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SafariServices
 
 class AboutTableViewController: UITableViewController {
     
@@ -66,6 +67,30 @@ class AboutTableViewController: UITableViewController {
             navigationController?.navigationBar.scrollEdgeAppearance = appearance
         }
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        switch segue.identifier {
+        case "showWebView":
+            if let webView = segue.destination as? WebViewController {
+                if let selectedCell = self.dataSource.itemIdentifier(for: tableView.indexPathForSelectedRow!) {
+                    webView.url = selectedCell.link
+                }
+            }
+        default:
+            break
+        }
+    }
+    
+    func openWithSafariViewController(indexPath: IndexPath) {
+        guard let linkItem = self.dataSource.itemIdentifier(for: indexPath) else {
+            return
+        }
+        
+        if let url = URL(string: linkItem.link) {
+            let safariController = SFSafariViewController(url: url)
+            present(safariController, animated: true)
+        }
+    }
 
     // MARK: - Table view data source
     func configureDataSource() -> UITableViewDiffableDataSource<Section, LinkItem> {
@@ -94,13 +119,21 @@ class AboutTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let linkItem = self.dataSource.itemIdentifier(for: indexPath) else {
-            return
+        switch indexPath.section {
+        case 0:
+            performSegue(withIdentifier: "showWebView", sender: self)
+        case 1:
+            openWithSafariViewController(indexPath: indexPath)
+        default:
+            break
         }
         
-        if let url = URL(string: linkItem.link) {
-            UIApplication.shared.open(url)
-        }
+//        guard let linkItem = self.dataSource.itemIdentifier(for: indexPath) else {
+//            return
+//        }
+//        if let url = URL(string: linkItem.link) {
+//            UIApplication.shared.open(url)
+//        }
         
         tableView.deselectRow(at: indexPath, animated: false)
     }
