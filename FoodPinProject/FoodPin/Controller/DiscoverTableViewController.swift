@@ -17,9 +17,23 @@ class DiscoverTableViewController: UITableViewController {
     var restaurants: [CKRecord] = []
     
     lazy var dataSource = configureDataSource()
+    
+    var spinner = UIActivityIndicatorView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        spinner.style = .medium
+        spinner.hidesWhenStopped = true
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(spinner)
+        
+        // 定義 spinner auto layout contraints
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([ spinner.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 150.0),
+        spinner.centerXAnchor.constraint(equalTo: view.centerXAnchor)])
+        
+        spinner.startAnimating()
         
         tableView.cellLayoutMarginsFollowReadableWidth = true
         navigationController?.navigationBar.prefersLargeTitles = true
@@ -100,6 +114,10 @@ class DiscoverTableViewController: UITableViewController {
                 print("Successfully retrieve the data from iCloud")
                 self.updateSnapshot()
             }
+        }
+        // 停止 spinner
+        DispatchQueue.main.async {
+            self.spinner.stopAnimating()
         }
         
         publicDatabase.add(queryOperation)
