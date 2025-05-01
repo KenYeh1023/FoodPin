@@ -24,6 +24,11 @@ class DiscoverTableViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        //下拉更新
+        refreshControl = UIRefreshControl()
+        refreshControl?.backgroundColor = UIColor.white
+        refreshControl?.tintColor = UIColor.gray
+        refreshControl?.addTarget(self, action: #selector(fetchRecordsFromCloud), for: UIControl.Event.valueChanged)
         
         spinner.style = .medium
         spinner.hidesWhenStopped = true
@@ -108,7 +113,7 @@ class DiscoverTableViewController: UITableViewController {
         return dataSource
     }
     
-    func fetchRecordsFromCloud() {
+    @objc func fetchRecordsFromCloud() {
         let cloudContainer = CKContainer(identifier: ckContainerId)
         let publicDatabase = cloudContainer.publicCloudDatabase
         let predicate = NSPredicate(value: true)
@@ -118,8 +123,12 @@ class DiscoverTableViewController: UITableViewController {
         queryOperation.desiredKeys = ["name"]
         queryOperation.queuePriority = .veryHigh
         queryOperation.resultsLimit = 50
-        queryOperation.recordMatchedBlock = {(queryID, result) -> Void in
+        queryOperation.recordMatchedBlock = {(recordID, result) -> Void in
             do {
+                if let _ = self.restaurants.first(where: {$0.recordID == recordID}) {
+                    return
+                }
+                
                 self.restaurants.append(try result.get())
             } catch {
                 print(error)
@@ -135,9 +144,14 @@ class DiscoverTableViewController: UITableViewController {
                 self.updateSnapshot()
             }
         }
-        // 停止 spinner
+        // 停止 spinner & refresh
         DispatchQueue.main.async {
             self.spinner.stopAnimating()
+        }
+        if let refreshControl = self.refreshControl {
+            if refreshControl.isRefreshing {
+                refreshControl.endRefreshing()
+            }
         }
         
         publicDatabase.add(queryOperation)
