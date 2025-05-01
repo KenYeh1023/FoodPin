@@ -49,13 +49,6 @@ class DiscoverTableViewController: UITableViewController {
             navigationController?.navigationBar.compactAppearance = appearance
             navigationController?.navigationBar.scrollEdgeAppearance = appearance
         }
-//        Task.init(priority: .high) {
-//            do {
-//                try await fetchRecordsFromCloud()
-//            } catch {
-//                print(error.localizedDescription)
-//            }
-//        }
         fetchRecordsFromCloud()
         tableView.dataSource = dataSource
     }
@@ -68,34 +61,48 @@ class DiscoverTableViewController: UITableViewController {
             let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)
             
             cell.textLabel?.text = restaurant.object(forKey: "name") as? String
+            //設定 default image
+            cell.imageView?.image = UIImage(systemName: "photo")
+            cell.imageView?.tintColor = .black
+            //背景 fetch images
+//            let publicDatabase = CKContainer.default().publicCloudDatabase
+            let publicDatabase = CKContainer(identifier: "iCloud.com.kenyeh.FoodPin1").publicCloudDatabase
+            let fetchRecordsImageOperation = CKFetchRecordsOperation(recordIDs: [restaurant.recordID])
+            fetchRecordsImageOperation.desiredKeys = ["image"]
+            fetchRecordsImageOperation.queuePriority = .veryHigh
             
-            if let image = restaurant.object(forKey: "image"), let imageAsset = image as? CKAsset {
-                if let imageData = try? Data.init(contentsOf: imageAsset.fileURL!) {
-                    cell.imageView?.image = UIImage(data: imageData)
+            fetchRecordsImageOperation.perRecordResultBlock = {(recordID, result) in
+                do {
+                    let restaurantRecord = try result.get()
+                    if let image = restaurantRecord.object(forKey: "image"),
+                        let imageAsset = image as? CKAsset {
+                        if let imageData = try? Data.init(contentsOf: imageAsset.fileURL!) {
+                            DispatchQueue.main.async {
+                                cell.imageView?.image = UIImage(data: imageData)
+                                cell.setNeedsLayout()
+                            }
+                        }
+                    }
+                } catch {
+                    print("Failed to get iCloud restaurant Images: \(error.localizedDescription)")
                 }
             }
+            
+            publicDatabase.add(fetchRecordsImageOperation)
             
             return cell
         }
         return dataSource
     }
     
-//    func fetchRecordsFromCloud() async throws {
-//        let cloudContainer = CKContainer.default()
     func fetchRecordsFromCloud() {
         let cloudContainer = CKContainer(identifier: "iCloud.com.kenyeh.FoodPin1")
         let publicDatabase = cloudContainer.publicCloudDatabase
         let predicate = NSPredicate(value: true)
         let query = CKQuery(recordType: "Restaurant", predicate: predicate)
         
-//        let results = try await publicDatabase.records(matching: query)
-//        
-//        for record in results.matchResults {
-//            self.restaurants.append(try record.1.get())
-//        }
-        
         let queryOperation = CKQueryOperation(query: query)
-        queryOperation.desiredKeys = ["name", "image"]
+        queryOperation.desiredKeys = ["name"]
         queryOperation.queuePriority = .veryHigh
         queryOperation.resultsLimit = 50
         queryOperation.recordMatchedBlock = {(queryID, result) -> Void in
@@ -121,7 +128,6 @@ class DiscoverTableViewController: UITableViewController {
         }
         
         publicDatabase.add(queryOperation)
-//        self.updateSnapshot()
     }
     
     func updateSnapshot() {
