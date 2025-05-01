@@ -19,6 +19,8 @@ class DiscoverTableViewController: UITableViewController {
     lazy var dataSource = configureDataSource()
     
     var spinner = UIActivityIndicatorView()
+    private var ckContainerId: String = "iCloud.com.kenyeh.FoodPin1"
+    private var imageCache = NSCache<CKRecord.ID, NSURL>()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -64,31 +66,42 @@ class DiscoverTableViewController: UITableViewController {
             //設定 default image
             cell.imageView?.image = UIImage(systemName: "photo")
             cell.imageView?.tintColor = .black
-            //背景 fetch images
-//            let publicDatabase = CKContainer.default().publicCloudDatabase
-            let publicDatabase = CKContainer(identifier: "iCloud.com.kenyeh.FoodPin1").publicCloudDatabase
-            let fetchRecordsImageOperation = CKFetchRecordsOperation(recordIDs: [restaurant.recordID])
-            fetchRecordsImageOperation.desiredKeys = ["image"]
-            fetchRecordsImageOperation.queuePriority = .veryHigh
             
-            fetchRecordsImageOperation.perRecordResultBlock = {(recordID, result) in
-                do {
-                    let restaurantRecord = try result.get()
-                    if let image = restaurantRecord.object(forKey: "image"),
-                        let imageAsset = image as? CKAsset {
-                        if let imageData = try? Data.init(contentsOf: imageAsset.fileURL!) {
-                            DispatchQueue.main.async {
-                                cell.imageView?.image = UIImage(data: imageData)
-                                cell.setNeedsLayout()
+            //檢查 Cache 是否已經有 images
+            if let imageFileURL = self.imageCache.object(forKey: restaurant.recordID) {
+                //取得 Cache images
+                if let imageData = try? Data.init(contentsOf: imageFileURL as URL) {
+                    cell.imageView?.image = UIImage(data: imageData)
+                }
+            } else {
+                //背景 fetch images
+                //let publicDatabase = CKContainer.default().publicCloudDatabase
+                let publicDatabase = CKContainer(identifier: self.ckContainerId).publicCloudDatabase
+                let fetchRecordsImageOperation = CKFetchRecordsOperation(recordIDs: [restaurant.recordID])
+                fetchRecordsImageOperation.desiredKeys = ["image"]
+                fetchRecordsImageOperation.queuePriority = .veryHigh
+                
+                fetchRecordsImageOperation.perRecordResultBlock = {(recordID, result) in
+                    do {
+                        let restaurantRecord = try result.get()
+                        if let image = restaurantRecord.object(forKey: "image"),
+                            let imageAsset = image as? CKAsset {
+                            if let imageData = try? Data.init(contentsOf: imageAsset.fileURL!) {
+                                DispatchQueue.main.async {
+                                    cell.imageView?.image = UIImage(data: imageData)
+                                    cell.setNeedsLayout()
+                                }
+                                //儲存 image 進 Cache
+                                self.imageCache.setObject(imageAsset.fileURL! as NSURL, forKey: restaurant.recordID)
                             }
                         }
+                    } catch {
+                        print("Failed to get iCloud restaurant Images: \(error.localizedDescription)")
                     }
-                } catch {
-                    print("Failed to get iCloud restaurant Images: \(error.localizedDescription)")
                 }
+                
+                publicDatabase.add(fetchRecordsImageOperation)
             }
-            
-            publicDatabase.add(fetchRecordsImageOperation)
             
             return cell
         }
@@ -96,7 +109,7 @@ class DiscoverTableViewController: UITableViewController {
     }
     
     func fetchRecordsFromCloud() {
-        let cloudContainer = CKContainer(identifier: "iCloud.com.kenyeh.FoodPin1")
+        let cloudContainer = CKContainer(identifier: ckContainerId)
         let publicDatabase = cloudContainer.publicCloudDatabase
         let predicate = NSPredicate(value: true)
         let query = CKQuery(recordType: "Restaurant", predicate: predicate)
