@@ -57,7 +57,9 @@ class DiscoverTableViewController: UITableViewController {
             navigationController?.navigationBar.scrollEdgeAppearance = appearance
         }
         fetchRecordsFromCloud()
+        tableView.register(DiscoverTableViewCell.self, forCellReuseIdentifier: "discovercell")
         tableView.dataSource = dataSource
+        
     }
     
     func configureDataSource() -> UITableViewDiffableDataSource<Section,CKRecord> {
@@ -65,18 +67,26 @@ class DiscoverTableViewController: UITableViewController {
         let cellIdentifier: String = "discovercell"
         
         let dataSource = UITableViewDiffableDataSource<Section,CKRecord>(tableView: tableView) { (tableView, indexPath, restaurant) -> UITableViewCell in
-            let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)
+            let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! DiscoverTableViewCell
             
-            cell.textLabel?.text = restaurant.object(forKey: "name") as? String
-            //設定 default image
-            cell.imageView?.image = UIImage(systemName: "photo")
-            cell.imageView?.tintColor = .black
+            let restaurantName = restaurant.object(forKey: "name") as? String ?? ""
+            let restaurantType = restaurant.object(forKey: "type") as? String ?? ""
+            let restaurantDescription = restaurant.object(forKey: "description") as? String ?? ""
+            
+            
+//            cell.setupCell(image: nil, name: restaurantName, type: restaurantType, description: restaurantDescription)
+            
+//            cell.textLabel?.text = restaurant.object(forKey: "name") as? String
+//            設定 default image
+//            cell.imageView?.image = UIImage(systemName: "photo")
+//            cell.imageView?.tintColor = .black
             
             //檢查 Cache 是否已經有 images
             if let imageFileURL = self.imageCache.object(forKey: restaurant.recordID) {
                 //取得 Cache images
                 if let imageData = try? Data.init(contentsOf: imageFileURL as URL) {
-                    cell.imageView?.image = UIImage(data: imageData)
+                    cell.setupCell(image: imageData, name: restaurantName, type: restaurantType, description: restaurantDescription)
+//                    cell.imageView?.image = UIImage(data: imageData)
                 }
             } else {
                 //背景 fetch images
@@ -93,8 +103,9 @@ class DiscoverTableViewController: UITableViewController {
                             let imageAsset = image as? CKAsset {
                             if let imageData = try? Data.init(contentsOf: imageAsset.fileURL!) {
                                 DispatchQueue.main.async {
-                                    cell.imageView?.image = UIImage(data: imageData)
-                                    cell.setNeedsLayout()
+                                    cell.setupCell(image: imageData, name: restaurantName, type: restaurantType, description: restaurantDescription)
+//                                    cell.imageView?.image = UIImage(data: imageData)
+//                                    cell.setNeedsLayout()
                                 }
                                 //儲存 image 進 Cache
                                 self.imageCache.setObject(imageAsset.fileURL! as NSURL, forKey: restaurant.recordID)
@@ -122,7 +133,7 @@ class DiscoverTableViewController: UITableViewController {
         query.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
         
         let queryOperation = CKQueryOperation(query: query)
-        queryOperation.desiredKeys = ["name"]
+        queryOperation.desiredKeys = ["name", "type", "description"]
         queryOperation.queuePriority = .veryHigh
         queryOperation.resultsLimit = 50
         queryOperation.recordMatchedBlock = {(recordID, result) -> Void in
@@ -165,5 +176,9 @@ class DiscoverTableViewController: UITableViewController {
         snapshot.appendItems(restaurants, toSection: .all)
         
         dataSource.apply(snapshot)
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 400
     }
 }
