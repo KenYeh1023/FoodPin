@@ -7,10 +7,47 @@
 
 import UIKit
 import SwiftData
+import CloudKit
 
 class NewRestaurantController: UITableViewController {
     
     weak var dataStore: RestaurantDataStore?
+    
+    private func saveRecordToCloud(restaurant: Restaurant) {
+        let record = CKRecord(recordType: "Restaurant")
+        record.setValue(restaurant.name, forKey: "name")
+        record.setValue(restaurant.type, forKey: "type")
+        record.setValue(restaurant.location, forKey: "location")
+        record.setValue(restaurant.phone, forKey: "phone")
+        record.setValue(restaurant.summary, forKey: "description")
+        
+        //調整 image 大小
+        let originalImage = restaurant.image
+        let scalingFactor = (originalImage.size.width > 1024) ? 1024 / originalImage.size.width : 1.0
+        
+        let imageFilePath = NSTemporaryDirectory() + restaurant.name
+        let imageFileURL = URL(fileURLWithPath: imageFilePath)
+        
+        if let imageData = originalImage.pngData(),
+           let scaledImage = UIImage(data: imageData, scale: scalingFactor) {
+            try? scaledImage.jpegData(compressionQuality: 0.8)?.write(to: imageFileURL)
+            
+            //建立上傳 iCloud 的 image asset
+            let imageAsset = CKAsset(fileURL: imageFileURL)
+            record.setValue(imageAsset, forKey: "image")
+        }
+        
+        let publicDatabase = CKContainer(identifier: "iCloud.com.kenyeh.FoodPin1").publicCloudDatabase
+        
+        publicDatabase.save(record) { record, error in
+            if error != nil {
+                print(error.debugDescription)
+            }
+            
+            //移除暫存檔
+            try? FileManager.default.removeItem(at: imageFileURL)
+        }
+    }
     
     @IBAction func saveRestaurant(sender: UIBarButtonItem) {
         if nameTextField.text?.isEmpty ?? false ||
@@ -47,8 +84,8 @@ class NewRestaurantController: UITableViewController {
                 print(error)
             }
             print("Saving data to database...")
+            saveRecordToCloud(restaurant: restaurant)
         }
-        
         dismiss(animated: true) {
             self.dataStore?.fetchRestaurantData(searchText: "")
         }
